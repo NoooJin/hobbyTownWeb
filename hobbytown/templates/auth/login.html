@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">로그인</h5>
+    <form method="post">
+        {{ form.csrf_token }}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="username">사용자 이름</label>
+            <input type="text" class="form-control" name="username" id="username">
+        </div>
+        <div class="mb-3">
+            <label for="secret">비밀번호</label>
+            <input type="password" class="form-control" name="secret" id="secret">
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+        <li class="btn btn-primary">
+            <a style="text-align: center; text-decoration: none; color: inherit" href="{{ url_for('auth.signup') }}">회원가입</a>
+        </li>
+    </form>
+</div>
+{% endblock %}

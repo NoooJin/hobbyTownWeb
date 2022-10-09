@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-3">
+    <!-- flash 오류 -->
+    <!-- flash 오류 -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <!-- 질문  -->
+    <h2>{{ question_dict['subject'] }}</h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text">{{ question_dict['content'] }}</div>
+            <div class="d-flex justify-content-end">
+                {% if question_dict['modify_date'] %}
+                <div class="badge bg-light text-dark p-2 text-start mx-3">
+                    <div class="mb-2">modified at</div>
+                    <div>{{ question_dict['modify_date']|datetime }}</div>
+                </div>
+                {% endif %}
+                <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">{{ question_dict['user_name'] }}</div>
+                    <div>{{ question_dict['create_date']|datetime }}</div>
+                </div>
+            </div>
+            <div class="mb-3">
+                {% if g.user == question_dict['user_name'] %}
+                    <a href="{{ url_for('question.modify', question_id=question_dict['idx']) }}"
+                       class="btn btn-sm btn-outline-secondary">수정</a>
+                    <a href="{{ url_for('question.delete', question_id=question_dict['idx']) }}"
+                       class="btn btn-sm btn-outline-secondary">삭제</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 답변 목록 -->
+<h5 class="border-bottom my-3">댓글 {{ answer_dict|length }}개</h5>
+    {% if answer_dict %}
+        {% for answer in answer_dict %}
+            <div class="card my-3">
+                <div class="'card-body">
+                    <div class="card-text">{{ answer['content'] }}</div>
+                    <div class="d-flex jusify-content-end">
+                        <div class="mb-2">{{ answer['user_id'] }}</div>
+                        <div class="mb-2">&nbsp&nbsp{{ answer['create_date']|datetime }}</div>
+                    </div>
+                    <div class="my-3">
+                    {% if g.user == answer['user_id'] %}
+                    <a href="{{ url_for('answer.modify', answer_id=answer['idx']) }}"
+                       class="btn btn-sm btn-outline-secondary">수정</a>
+                    <a href="{{ url_for('answer.delete', answer_id=answer['idx']) }}"
+                       class="btn btn-sm btn-outline_secondary">삭제</a>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+<form action="{{ url_for('answer.create', question_id=question_dict['idx']) }}" method="post">
+    {{ form.csrf_token }}
+    {% include "form_errors.html" %}
+    <div>
+        <label for="content">댓글</label>
+        <textarea class="form-control" name="content" id="content"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">댓글달기</button>
+</form>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+{% endblock %}
